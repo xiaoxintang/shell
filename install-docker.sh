@@ -25,7 +25,18 @@ fi
 echo "正在安装 Docker..."
 sudo sh get-docker.sh
 
+# 将当前用户添加到 docker 组
+echo "\n正在将当前用户添加到 docker 组..."
+CURRENT_USER=$(whoami)
+sudo usermod -aG docker "$CURRENT_USER"
+echo "- 当前用户 $CURRENT_USER 已添加到 docker 组"
+echo "- 注意：需要重新登录或重启终端才能生效"
+
 # 清理临时文件
 rm -f get-docker.sh
 
-echo "Docker 安装完成！"
+echo "\nDocker 安装完成！"
+echo "使用说明："
+echo "1. 重新登录或重启终端以应用 docker 组权限"
+echo "2. 测试 Docker 是否正常运行：docker run hello-world"
+echo "3. 查看 Docker 版本：docker --version"
