@@ -33,7 +33,7 @@ fi
 
 # 安装 zsh-syntax-highlighting 插件
 echo "\n正在安装 zsh-syntax-highlighting 插件..."
-PLUGIN_DIR="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+PLUGIN_DIR="${ZSH:-~/.oh-my-zsh}/plugins/zsh-syntax-highlighting"
 
 if [ -d "$PLUGIN_DIR" ]; then
     echo "- zsh-syntax-highlighting 插件已存在，跳过安装"
@@ -45,7 +45,7 @@ fi
 
 # 安装 zsh-history-substring-search 插件
 echo "\n正在安装 zsh-history-substring-search 插件..."
-PLUGIN_DIR="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-history-substring-search"
+PLUGIN_DIR="${ZSH:-~/.oh-my-zsh}/plugins/zsh-history-substring-search"
 
 if [ -d "$PLUGIN_DIR" ]; then
     echo "- zsh-history-substring-search 插件已存在，跳过安装"
@@ -76,42 +76,49 @@ if [ ! -f "$ZSHRC_FILE" ]; then
     exit 1
 fi
 
-# 检查并添加 zsh-autosuggestions 到 plugins 数组
-if grep -q "zsh-autosuggestions" "$ZSHRC_FILE"; then
+# 检查并修改 plugins 数组
+# 首先读取当前的 plugins 行
+PLUGINS_LINE=$(grep -E '^plugins=\(' "$ZSHRC_FILE")
+
+# 检查 plugins 行是否存在
+if [ -z "$PLUGINS_LINE" ]; then
+    echo "错误：未找到 plugins 数组定义"
+    exit 1
+fi
+
+# 提取当前的插件列表
+CURRENT_PLUGINS=$(echo "$PLUGINS_LINE" | sed 's/plugins=(//; s/)/\n/; s/\s\+/\n/g' | grep -v '^$')
+
+# 检查并添加 zsh-autosuggestions 插件
+if echo "$CURRENT_PLUGINS" | grep -q "zsh-autosuggestions"; then
     echo "- zsh-autosuggestions 已在 plugins 数组中，跳过配置"
 else
     echo "- 在 plugins 数组中添加 zsh-autosuggestions"
-    
-    # 使用 sed 命令在 plugins 数组中添加 zsh-autosuggestions
-    # 查找 plugins=( 行，在其后添加 zsh-autosuggestions
-    sed -i '/^plugins=(/a\    zsh-autosuggestions' "$ZSHRC_FILE"
-    
+    # 替换 plugins 行，添加新插件
+    NEW_PLUGINS_LINE=$(echo "$PLUGINS_LINE" | sed 's/plugins=(/plugins=(zsh-autosuggestions /; s/)/ zsh-autosuggestions)/; s/zsh-autosuggestions \(.*\) zsh-autosuggestions/zsh-autosuggestions \1/')
+    sed -i "s/^plugins=\(.*\)/$NEW_PLUGINS_LINE/" "$ZSHRC_FILE"
     echo "- 配置完成"
 fi
 
-# 检查并添加 zsh-syntax-highlighting 到 plugins 数组
-if grep -q "zsh-syntax-highlighting" "$ZSHRC_FILE"; then
+# 检查并添加 zsh-syntax-highlighting 插件
+if echo "$CURRENT_PLUGINS" | grep -q "zsh-syntax-highlighting"; then
     echo "- zsh-syntax-highlighting 已在 plugins 数组中，跳过配置"
 else
     echo "- 在 plugins 数组中添加 zsh-syntax-highlighting"
-    
-    # 使用 sed 命令在 plugins 数组中添加 zsh-syntax-highlighting
-    # 查找 plugins=( 行，在其后添加 zsh-syntax-highlighting
-    sed -i '/^plugins=(/a\    zsh-syntax-highlighting' "$ZSHRC_FILE"
-    
+    # 替换 plugins 行，添加新插件
+    NEW_PLUGINS_LINE=$(echo "$PLUGINS_LINE" | sed 's/plugins=(/plugins=(zsh-syntax-highlighting /; s/)/ zsh-syntax-highlighting)/; s/zsh-syntax-highlighting \(.*\) zsh-syntax-highlighting/zsh-syntax-highlighting \1/')
+    sed -i "s/^plugins=\(.*\)/$NEW_PLUGINS_LINE/" "$ZSHRC_FILE"
     echo "- 配置完成"
 fi
 
-# 检查并添加 zsh-history-substring-search 到 plugins 数组
-if grep -q "zsh-history-substring-search" "$ZSHRC_FILE"; then
+# 检查并添加 zsh-history-substring-search 插件
+if echo "$CURRENT_PLUGINS" | grep -q "zsh-history-substring-search"; then
     echo "- zsh-history-substring-search 已在 plugins 数组中，跳过配置"
 else
     echo "- 在 plugins 数组中添加 zsh-history-substring-search"
-    
-    # 使用 sed 命令在 plugins 数组中添加 zsh-history-substring-search
-    # 查找 plugins=( 行，在其后添加 zsh-history-substring-search
-    sed -i '/^plugins=(/a\    zsh-history-substring-search' "$ZSHRC_FILE"
-    
+    # 替换 plugins 行，添加新插件
+    NEW_PLUGINS_LINE=$(echo "$PLUGINS_LINE" | sed 's/plugins=(/plugins=(zsh-history-substring-search /; s/)/ zsh-history-substring-search)/; s/zsh-history-substring-search \(.*\) zsh-history-substring-search/zsh-history-substring-search \1/')
+    sed -i "s/^plugins=\(.*\)/$NEW_PLUGINS_LINE/" "$ZSHRC_FILE"
     echo "- 配置完成"
 fi
 
