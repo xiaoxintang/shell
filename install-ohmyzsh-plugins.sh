@@ -14,7 +14,7 @@ if ! command -v git &> /dev/null; then
 fi
 
 # 检查 Oh My Zsh 是否安装
-if [ ! -d "${ZSH_CUSTOM:-~/.oh-my-zsh}" ]; then
+if [ ! -d "${ZSH:-~/.oh-my-zsh}" ]; then
     echo "错误：Oh My Zsh 未安装，请先安装 Oh My Zsh"
     exit 1
 fi
