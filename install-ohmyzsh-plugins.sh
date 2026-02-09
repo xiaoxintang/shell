@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Oh My Zsh 插件安装脚本
-# 功能：安装 zsh-autosuggestions 插件并配置到 .zshrc
+# 功能：安装 zsh-autosuggestions、zsh-syntax-highlighting 和 zsh-history-substring-search 插件并配置到 .zshrc
 
 set -e  # 遇到错误立即退出
 
@@ -21,7 +21,7 @@ fi
 
 # 安装 zsh-autosuggestions 插件
 echo "\n正在安装 zsh-autosuggestions 插件..."
-PLUGIN_DIR="${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+PLUGIN_DIR="${ZSH:-~/.oh-my-zsh}/plugins/zsh-autosuggestions"
 
 if [ -d "$PLUGIN_DIR" ]; then
     echo "- zsh-autosuggestions 插件已存在，跳过安装"
@@ -57,11 +57,20 @@ fi
 
 # 配置 .zshrc 文件
 echo "\n正在配置 .zshrc 文件..."
+
+# 明确指定 .zshrc 文件路径
 ZSHRC_FILE="~/.zshrc"
 
 # 展开 ~ 为实际路径
 ZSHRC_FILE="$(eval echo "$ZSHRC_FILE")"
 
+# 检查 ZSHRC_FILE 是否设置
+if [ -z "$ZSHRC_FILE" ]; then
+    echo "错误：ZSHRC_FILE 未设置"
+    exit 1
+fi
+
+# 检查 .zshrc 文件是否存在
 if [ ! -f "$ZSHRC_FILE" ]; then
     echo "错误：.zshrc 文件不存在"
     exit 1
@@ -75,8 +84,7 @@ else
     
     # 使用 sed 命令在 plugins 数组中添加 zsh-autosuggestions
     # 查找 plugins=( 行，在其后添加 zsh-autosuggestions
-    sed -i '' '/^plugins=(/a\
-    zsh-autosuggestions' "$ZSHRC_FILE"
+    sed -i '/^plugins=(/a\    zsh-autosuggestions' "$ZSHRC_FILE"
     
     echo "- 配置完成"
 fi
@@ -89,8 +97,7 @@ else
     
     # 使用 sed 命令在 plugins 数组中添加 zsh-syntax-highlighting
     # 查找 plugins=( 行，在其后添加 zsh-syntax-highlighting
-    sed -i '' '/^plugins=(/a\
-    zsh-syntax-highlighting' "$ZSHRC_FILE"
+    sed -i '/^plugins=(/a\    zsh-syntax-highlighting' "$ZSHRC_FILE"
     
     echo "- 配置完成"
 fi
@@ -103,8 +110,7 @@ else
     
     # 使用 sed 命令在 plugins 数组中添加 zsh-history-substring-search
     # 查找 plugins=( 行，在其后添加 zsh-history-substring-search
-    sed -i '' '/^plugins=(/a\
-    zsh-history-substring-search' "$ZSHRC_FILE"
+    sed -i '/^plugins=(/a\    zsh-history-substring-search' "$ZSHRC_FILE"
     
     echo "- 配置完成"
 fi
